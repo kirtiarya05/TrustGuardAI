@@ -6,3 +6,4 @@ joblib
 pydantic
 requests
 nltk
+textblob
