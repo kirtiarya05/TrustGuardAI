@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, ShieldAlert, Lock, Zap, Search, Fingerprint, Database, CheckCircle, Menu, Activity, TerminalSquare, AlertTriangle, AlertCircle, Share2, Download, Info } from 'lucide-react';
+import { 
+  Shield, ShieldAlert, Lock, Zap, Search, Fingerprint, 
+  Database, CheckCircle, Menu, Activity, TerminalSquare, 
+  AlertTriangle, AlertCircle, Share2, Download, Info, 
+  Globe, Cpu, Server, Radio, BarChart3, ScanEye, Eye, 
+  FileSearch, MessageSquareQuote, Layers, History, Settings
+} from 'lucide-react';
 
 export default function App() {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const [logs, setLogs] = useState([]);
+  const [activeTab, setActiveTab] = useState('ANALYZE');
+  const [scanningEffect, setScanningEffect] = useState(false);
 
   const getThemeColor = (category) => {
     switch (category?.toLowerCase()) {
-      case 'fake': return { text: 'text-red-500', bg: 'bg-red-500', border: 'border-red-500' };
-      case 'suspicious': return { text: 'text-yellow-500', bg: 'bg-yellow-500', border: 'border-yellow-500' };
-      case 'real': return { text: 'text-accent', bg: 'bg-accent', border: 'border-accent' };
-      default: return { text: 'text-gray-500', bg: 'bg-gray-500', border: 'border-gray-500' };
+      case 'fake': return { text: 'text-red-500', bg: 'bg-red-500', border: 'border-red-500', accent: '#ef4444' };
+      case 'suspicious': return { text: 'text-yellow-500', bg: 'bg-yellow-500', border: 'border-yellow-500', accent: '#eab308' };
+      case 'real': return { text: 'text-[#00ff88]', bg: 'bg-[#00ff88]', border: 'border-[#00ff88]', accent: '#00ff88' };
+      default: return { text: 'text-gray-500', bg: 'bg-gray-500', border: 'border-gray-500', accent: '#6b7280' };
     }
   };
 
@@ -20,6 +27,11 @@ export default function App() {
     if (!inputText.trim()) return;
     
     setLoading(true);
+    setScanningEffect(true);
+    
+    // Artificial delay for "Cyber" feel
+    await new Promise(r => setTimeout(r, 2200));
+
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
       const response = await fetch(`${apiUrl}/api/analyze`, {
@@ -30,302 +42,325 @@ export default function App() {
       const data = await response.json();
       setResult(data);
     } catch (error) {
-      console.error("Analysis failed:", error);
+      console.error("Deep Scan failed:", error);
       setResult({
         score: 0,
-        category: "Error",
-        explanation: "Neural connection failed. Please ensure the Threat Analysis Engine (backend) is running."
+        category: "Network Error",
+        explanation: "Neural link severed. Ensure Deep Scan Engine (backend) is active.",
+        sentiment: "Unknown",
+        subjectivity: 0.0,
+        flags: ["CONNECTION_LOST"],
+        entities: []
       });
     } finally {
       setLoading(false);
+      setScanningEffect(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0c10] text-gray-200 font-sans selection:bg-accent selection:text-black relative">
-      <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
-        <div className="w-full h-full bg-animated-grid" style={{ maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)' }}></div>
+    <div className="min-h-screen bg-[#06070a] text-gray-300 font-sans selection:bg-[#00ff88] selection:text-black overflow-x-hidden">
+      {/* Background Matrix-like Overlay */}
+      <div className="fixed inset-0 pointer-events-none opacity-20 z-0 overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,136,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,136,0.05)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06070a] via-transparent to-transparent"></div>
+        <div className="absolute -top-[50%] -left-[20%] w-[140%] h-[140%] bg-[radial-gradient(circle,rgba(0,255,136,0.03)_0%,transparent_70%)] animate-pulse"></div>
       </div>
+
+      {/* CRT Scanline Effect */}
+      <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,118,0.06))] bg-[size:100%_2px,3px_100%]"></div>
       
-      <div className="relative z-10 w-full">
-      {/* Navigation Bar */}
-      <nav className="flex items-center justify-between px-8 py-6 border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="bg-accent rounded-lg p-2 text-black shadow-[0_0_15px_rgba(0,255,136,0.3)]">
-            <Shield size={24} className="fill-current" />
-          </div>
-          <span className="font-display font-bold text-xl tracking-widest text-white">TRUSTGUARD AI</span>
-        </div>
-        
-        <div className="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wider text-gray-400">
-          <a href="#" className="hover:text-accent transition-colors">TECHNOLOGY</a>
-          <a href="#" className="hover:text-accent transition-colors flex items-center gap-2">
-            <TerminalSquare size={16} /> API
-          </a>
-          <button className="text-gray-300 hover:text-white transition-colors">
-            <Menu size={24} />
-          </button>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto px-6 pt-20 pb-32">
-        
-        {/* Hero Section */}
-        <div className="flex flex-col items-center text-center space-y-6 mb-16 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/30 bg-accent/5 text-accent text-xs font-mono font-semibold tracking-wider">
-            <Zap size={14} className="fill-accent text-accent" />
-            NEXT-GEN MISINFORMATION DEFENSE
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight tracking-tight text-white mb-4">
-            VERIFY THE <span className="text-accent">TRUTH</span><br />
-            IN REAL-TIME.
-          </h1>
-        </div>
-
-        {/* Inference / Input Section */}
-        <div className="max-w-4xl mx-auto mb-20 relative z-10">
-          <div className={`rounded-xl transition-all duration-300 p-px ${inputText ? 'bg-gradient-to-r from-accent to-neon-blue' : 'bg-white/10 hover:bg-white/20'}`}>
-            <div className="bg-[#121319] rounded-xl p-1 relative flex flex-col">
-              <AnimatedTextarea 
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-              />
-              
-              <div className="absolute bottom-4 right-5 text-xs text-gray-600 font-mono">
-                {inputText.length} characters
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Top Intelligence Header */}
+        <header className="border-b border-[#00ff88]/10 bg-black/40 backdrop-blur-md sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-[#00ff88]/30 rounded-lg blur group-hover:blur-md transition-all duration-500"></div>
+                <div className="relative bg-black rounded-lg p-2 border border-[#00ff88]/50 text-[#00ff88]">
+                   <ScanEye size={22} className="animate-pulse" />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-display font-black text-xl tracking-[0.25em] text-white">TRUSTGUARD AI</span>
+                <span className="text-[9px] font-mono text-[#00ff88]/70 tracking-[0.4em] uppercase">Deep Scan Protocol v4.2.0</span>
               </div>
             </div>
-          </div>
 
-          <button 
-            onClick={handleAnalyze}
-            disabled={loading || !inputText}
-            className={`w-full mt-4 py-4 rounded-xl flex items-center justify-center gap-3 font-semibold text-lg tracking-wide transition-all shadow-[0_0_20px_rgba(0,255,136,0.15)]
-              ${(!inputText || loading) ? 'bg-accent/40 text-black/50 cursor-not-allowed' : 'bg-accent text-black hover:bg-accent-dark hover:shadow-[0_0_25px_rgba(0,255,136,0.4)]'}`}
-          >
-            {loading ? (
-              <Activity className="animate-spin" size={24} />
-            ) : (
-              <ShieldCheck size={24} />
-            )}
-            {loading ? 'ANALYZING NEURAL PATTERNS...' : 'CHECK TRUST SCORE'}
-          </button>
-          {/* Share / Export Buttons */}
-          {result && !loading && (
-            <div className="flex justify-end gap-3 mt-8 mb-2 animate-in fade-in duration-700 relative z-10 w-full max-w-2xl mx-auto">
-              <button className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 hover:border-white/30 bg-[#121318]/80 backdrop-blur-sm text-gray-300 text-xs font-semibold tracking-widest transition-all uppercase">
-                <Share2 size={14} /> Share
-              </button>
-              <button className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 hover:border-white/30 bg-[#121318]/80 backdrop-blur-sm text-gray-300 text-xs font-semibold tracking-widest transition-all uppercase">
-                <Download size={14} /> Export PDF
-              </button>
+            <div className="hidden lg:flex items-center gap-10">
+               <NavItem icon={<Globe size={14}/>} label="GLOBAL FEED" active={activeTab === 'FEED'} onClick={() => setActiveTab('FEED')} />
+               <NavItem icon={<Cpu size={14}/>} label="DEEP SCAN" active={activeTab === 'ANALYZE'} onClick={() => setActiveTab('ANALYZE')} />
+               <NavItem icon={<Database size={14}/>} label="MODEL KB" active={activeTab === 'KB'} onClick={() => setActiveTab('KB')} />
             </div>
-          )}
 
-          {/* Result Card Injection */}
-          {result && !loading && (
-             <div className="mt-4 animate-in slide-in-from-bottom-8 fade-in duration-700 relative z-10 flex justify-center w-full">
-                {(() => {
-                  const theme = getThemeColor(result.category);
-                  return (
-                    <div className={`w-full max-w-2xl border ${theme.border}/20 bg-[#0b0c10]/80 backdrop-blur-xl rounded-3xl p-8 md:p-12 relative overflow-hidden shadow-2xl shadow-black/50`}>
-                       {/* Background Shield Logo */}
-                       <Shield className={`absolute -right-10 -top-10 w-72 h-72 ${theme.text} opacity-5 transform rotate-12`} />
-                       
-                       <div className="flex flex-col items-center text-center relative z-10">
-                         {/* Score Circular Indicator */}
-                          <div className="relative flex items-center justify-center shrink-0 mb-8">
-                             <svg className="w-40 h-40 transform -rotate-90 drop-shadow-xl">
-                                <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="12" fill="none" className="text-[#1a1b23]" />
-                                <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="12" fill="none" strokeLinecap="round" strokeDasharray="439.8" strokeDashoffset={439.8 - (439.8 * result.score) / 100} className={`${theme.text} transition-all duration-[2000ms] ease-out`} />
-                             </svg>
-                             <div className="absolute flex flex-col items-center justify-center text-white">
-                               <AnimatedCounter value={result.score} className="text-5xl font-display font-bold leading-none" />
-                               <span className="text-xs font-mono font-semibold uppercase tracking-widest mt-2 text-gray-400">Score</span>
-                             </div>
+            <div className="flex items-center gap-4">
+               <div className="h-2 w-2 rounded-full bg-[#00ff88] animate-ping"></div>
+               <div className="hidden sm:block text-[10px] font-mono text-[#00ff88]">SYSTEM_STATUS: OK</div>
+               <button className="p-2 hover:bg-white/5 rounded-full transition-colors text-white">
+                 <Settings size={20} />
+               </button>
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-12 pb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            
+            {/* Left Control Panel (Main Input) */}
+            <div className="lg:col-span-8 flex flex-col gap-8">
+              <div className="flex flex-col gap-2">
+                <h2 className="text-4xl md:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
+                  AI <span className="text-[#00ff88] text-glow">REALITY</span> CHECKER
+                </h2>
+                <p className="text-gray-500 font-mono text-sm max-w-xl">
+                  Analyze news, social media, and messages to detect fake content. Paste the text below to start the verification process.
+                </p>
+              </div>
+
+              <div className="relative group">
+                 {/* Input Glow */}
+                 <div className={`absolute -inset-1 rounded-3xl transition-all duration-700 opacity-20 blur-xl ${inputText ? 'bg-[#00ff88]' : 'bg-transparent'}`}></div>
+                 
+                 <div className="relative bg-[#0d0f14] border border-white/5 rounded-2xl overflow-hidden focus-within:border-[#00ff88]/30 transition-all duration-300">
+                    <div className="flex items-center px-6 py-3 border-b border-white/5 bg-white/[0.02]">
+                       <div className="flex items-center gap-2 text-[10px] font-mono text-gray-500 font-bold tracking-widest uppercase">
+                          <Radio size={12} className="text-[#00ff88]" /> Input_Buffer
+                       </div>
+                       <div className="ml-auto flex items-center gap-4">
+                          <div className="text-[10px] font-mono text-gray-600 uppercase">UTF-8 Encrypted</div>
+                          <History size={14} className="text-gray-600 hover:text-white cursor-pointer" />
+                       </div>
+                    </div>
+                    
+                    <textarea 
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      placeholder="Paste suspicious article, social media post, or phishing content here for forensic breakdown..."
+                      className="w-full h-64 bg-transparent p-8 text-xl text-gray-200 outline-none resize-none placeholder:text-gray-700 font-sans leading-relaxed"
+                    />
+
+                    <div className="absolute bottom-6 right-8 flex items-center gap-4">
+                       <span className="text-[10px] font-mono text-gray-600">{inputText.length} CHARS</span>
+                       <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
+                          <div className="h-full bg-[#00ff88] transition-all duration-300" style={{ width: `${Math.min(100, (inputText.length / 500) * 100)}%` }}></div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              <button 
+                onClick={handleAnalyze}
+                disabled={loading || !inputText}
+                className={`group relative py-6 rounded-2xl overflow-hidden transition-all duration-500
+                   ${(!inputText || loading) ? 'cursor-not-allowed opacity-50' : 'hover:scale-[1.01] active:scale-[0.99] font-glow'}`}
+              >
+                <div className={`absolute inset-0 bg-[#00ff88] transition-all duration-500 ${(inputText && !loading) ? 'opacity-100' : 'opacity-20'}`}></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                
+                <div className="relative flex items-center justify-center gap-4 text-black font-display font-black text-xl tracking-widest uppercase">
+                  {loading ? <Activity className="animate-spin" /> : <Layers className={inputText ? 'animate-bounce' : ''} />}
+                  {loading ? 'RUNNING_DEEP_SCAN' : 'INITIALIZE FORENSICS'}
+                </div>
+              </button>
+
+              {/* Technical Footnote */}
+              <div className="flex items-center gap-8 px-4 text-[9px] font-mono text-gray-600 font-bold tracking-[0.2em] uppercase">
+                <div className="flex items-center gap-2"><Server size={10}/> AWS_REGION: GLOBAL_HUB</div>
+                <div className="flex items-center gap-2"><MessageSquareQuote size={10}/> ENTROPY_MODE: ENABLED</div>
+                <div className="flex items-center gap-2"><Fingerprint size={10}/> AES_256_ACTIVE</div>
+              </div>
+            </div>
+
+            {/* Right Sidebar (Live Status / Results) */}
+            <div className="lg:col-span-4 flex flex-col gap-8">
+               
+               {/* Result Module */}
+               <div className="relative min-h-[500px]">
+                  {!result && !loading && (
+                    <div className="h-full border border-white/5 bg-[#0d0f14]/50 backdrop-blur-sm rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-8 group">
+                       <div className="w-24 h-24 rounded-full border border-white/10 flex items-center justify-center relative">
+                          <div className="absolute inset-0 bg-[#00ff88]/5 rounded-full blur-xl group-hover:bg-[#00ff88]/10 transition-all"></div>
+                          <Eye size={40} className="text-gray-700 group-hover:text-[#00ff88] transition-all" />
+                       </div>
+                       <div className="space-y-3">
+                          <h3 className="text-white font-display font-bold text-lg tracking-widest uppercase">SYSTEM READY</h3>
+                          <p className="text-gray-600 text-xs font-mono leading-relaxed px-6">
+                             Awaiting forensic packet insertion. Initialize deep scan to begin neural mapping and risk assessment.
+                          </p>
+                       </div>
+                       <div className="w-full max-w-[150px] space-y-2">
+                          <div className="h-0.5 w-full bg-white/5 rounded-full overflow-hidden"><div className="h-full bg-gray-800 w-1/3 animate-[shimmer_2s_infinite]"></div></div>
+                          <div className="h-0.5 w-full bg-white/5 rounded-full overflow-hidden"><div className="h-full bg-gray-800 w-2/3 animate-[shimmer_2s_infinite_0.5s]"></div></div>
+                       </div>
+                    </div>
+                  )}
+
+                  {loading && (
+                    <div className="h-full border border-[#00ff88]/20 bg-[#0d0f14]/80 backdrop-blur-xl rounded-3xl p-10 flex flex-col gap-10">
+                       <div className="flex items-center gap-4 border-b border-white/5 pb-6">
+                          <Activity className="text-[#00ff88] animate-spin" size={24} />
+                          <div className="flex flex-col">
+                             <span className="text-white font-mono text-sm font-black animate-pulse">ANALYZING...</span>
+                             <span className="text-gray-500 font-mono text-[9px] uppercase tracking-widest">Compiling Neural Signals</span>
                           </div>
+                       </div>
 
-                          <div className="space-y-6 w-full">
-                            <div className="flex items-center justify-center gap-3">
-                               {result.category.toLowerCase() === 'fake' ? <AlertCircle className={theme.text} size={36} /> : 
-                                result.category.toLowerCase() === 'suspicious' ? <AlertTriangle className={theme.text} size={36} /> : 
-                                <CheckCircle className={theme.text} size={36} />}
-                               <h2 className={`text-4xl font-display font-black tracking-widest uppercase ${theme.text}`}>
-                                 {result.category}
-                               </h2>
-                            </div>
-                            
-                            <div className="text-left mt-8 w-full border border-white/5 bg-[#14151a]/50 p-6 rounded-2xl">
-                              <div className="flex items-center gap-2 mb-4">
-                                <Info size={16} className="text-accent" />
-                                <span className="font-mono text-sm font-semibold tracking-widest text-gray-400">AI ANALYSIS REPORT</span>
-                              </div>
-                              <p className="text-gray-300 text-lg md:text-xl leading-relaxed italic pr-4">
-                                "{result.explanation}"
-                              </p>
-                            </div>
+                       <div className="space-y-6">
+                          <LoadingStep label="PATTERN MATCHING" active delay="0" />
+                          <LoadingStep label="SEMANTIC MAPPING" active delay="1s" />
+                          <LoadingStep label="ENTROPY CHECK" active delay="2s" />
+                          <LoadingStep label="CROSS_REF_GLOBAL" active={false} />
+                       </div>
+
+                       <div className="mt-auto space-y-4">
+                          <div className="flex justify-between text-[10px] font-mono text-[#00ff88]">
+                             <span>CPU_LOAD</span>
+                             <span>84%</span>
+                          </div>
+                          <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                             <div className="h-full bg-[#00ff88] animate-progress"></div>
                           </div>
                        </div>
                     </div>
-                  );
-                })()}
-             </div>
-          )}
-        </div>
+                  )}
 
-        {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-32 max-w-5xl mx-auto">
-          <FeatureCard 
-            icon={<Search className="text-accent" size={24} />}
-            title="Deep Analysis"
-            desc="Our NLP models scan for linguistic manipulation, logical fallacies, and emotional triggers."
-          />
-          <FeatureCard 
-            icon={<Lock className="text-[#a855f7]" size={24} />}
-            title="Privacy First"
-            desc="Your queries are processed anonymously and never stored. We prioritize data sovereignty."
-          />
-          <FeatureCard 
-            icon={<Shield className="text-accent" size={24} />}
-            title="Source Check"
-            desc="Cross-references content against a global database of 50,000+ verified news sources."
-          />
-        </div>
+                  {result && !loading && (
+                    <div className="animate-in slide-in-from-right-10 fade-in duration-500 h-full border border-white/10 bg-[#0d0f14] rounded-3xl p-8 relative overflow-hidden flex flex-col shadow-2xl shadow-black/80">
+                       {/* Background Logo Overlay */}
+                       <Shield className={`absolute -right-20 -top-20 w-80 h-80 opacity-5 rotate-12 ${getThemeColor(result.category).text}`} />
+                       
+                       <div className="relative z-10 flex flex-col h-full">
+                          
+                          <div className="flex items-start justify-between mb-8">
+                             <div className="flex flex-col">
+                                <span className="text-[10px] font-mono font-black text-gray-500 tracking-[0.3em] uppercase mb-1">Risk Assessment</span>
+                                <h3 className={`text-4xl font-display font-black tracking-tighter uppercase ${getThemeColor(result.category).text}`}>
+                                   {result.category}
+                                </h3>
+                             </div>
+                             <div className={`p-3 rounded-xl bg-black border ${getThemeColor(result.category).border}/30 ${getThemeColor(result.category).text}`}>
+                                {result.category.toLowerCase() === 'fake' ? <AlertCircle size={28} /> : 
+                                 result.category.toLowerCase() === 'suspicious' ? <AlertTriangle size={28} /> : 
+                                 <CheckCircle size={28} />}
+                             </div>
+                          </div>
 
-        {/* Threat Monitor UI */}
-        <div className="max-w-5xl mx-auto">
-          <div className="rounded-2xl border border-white/5 bg-[#121318] p-6 lg:p-8">
-             <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
-               <div className="flex items-center gap-3">
-                 <Activity className="text-accent animate-pulse" size={20} />
-                 <h3 className="font-mono text-sm tracking-widest text-gray-400 font-semibold">GLOBAL THREAT MONITOR</h3>
+                          {/* Score Visualizer */}
+                          <div className="bg-black/40 rounded-2xl p-6 border border-white/5 mb-8">
+                             <div className="flex items-center justify-between mb-4">
+                                <span className="text-xs font-mono font-bold text-gray-300">TRUST_INDEX</span>
+                                <span className={`text-2xl font-display font-black ${getThemeColor(result.category).text}`}>{result.score}%</span>
+                             </div>
+                             <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+                                <div 
+                                  className={`h-full transition-all duration-1000 ease-out rounded-full ${getThemeColor(result.category).bg}`}
+                                  style={{ width: `${result.score}%` }}
+                                ></div>
+                             </div>
+                          </div>
+
+                          {/* Detail Grid */}
+                          <div className="grid grid-cols-2 gap-3 mb-8">
+                             <AnalysisPill label="SENTIMENT" value={result.sentiment || 'NEUTRAL'} color={result.sentiment?.includes('Positive') ? '#00ff88' : '#ef4444'} />
+                             <AnalysisPill label="SUBJECTIVITY" value={`${(result.subjectivity * 100).toFixed(0)}%`} color="#a855f7" />
+                          </div>
+
+                          {/* Deep Scan Flags */}
+                          <div className="flex-1 space-y-4">
+                             <div className="flex items-center gap-2 text-[10px] font-mono font-black text-gray-500 uppercase">
+                                <FileSearch size={12} /> Forensic Flags
+                             </div>
+                             <div className="flex flex-wrap gap-2">
+                                {result.flags && result.flags.length > 0 ? (
+                                  result.flags.map((flag, i) => (
+                                    <span key={i} className="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-[9px] font-mono font-bold uppercase tracking-widest">
+                                      {flag}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <span className="px-3 py-1.5 rounded-lg bg-[#00ff88]/10 border border-[#00ff88]/20 text-[#00ff88] text-[9px] font-mono font-bold uppercase tracking-widest">
+                                    NO_SCAM_PATTERNS_DETECTED
+                                  </span>
+                                )}
+                             </div>
+                          </div>
+
+                          <div className="mt-8 border-t border-white/5 pt-6">
+                             <p className="text-gray-400 text-sm italic leading-relaxed font-mono">
+                                "{result.explanation}"
+                             </p>
+                          </div>
+
+                          <div className="flex items-center gap-3 mt-8">
+                             <button className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-white font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                                <Download size={12} /> Export_Packet
+                             </button>
+                             <button className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-white font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2 text-glow">
+                                <Share2 size={12} /> Global_Broadcast
+                             </button>
+                          </div>
+                       </div>
+                    </div>
+                  )}
                </div>
-               <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
-                 <div className="w-2 h-2 rounded-full bg-accent animate-ping"></div>
-                 LIVE FEED
-               </div>
-             </div>
 
-             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <ThreatItem city="London, UK" threat="Deepfake Audio" level="High" color="text-yellow-500" bg="bg-yellow-500" />
-                <ThreatItem city="New York, US" threat="Phishing Campaign" level="Critical" color="text-red-500" bg="bg-red-500" />
-                <ThreatItem city="Tokyo, JP" threat="Bot Network" level="Medium" color="text-accent" bg="bg-accent" />
-                <ThreatItem city="Berlin, DE" threat="Fake News Surge" level="High" color="text-yellow-500" bg="bg-yellow-500" />
-             </div>
+               {/* Entities Module */}
+               {result && result.entities && result.entities.length > 0 && (
+                 <div className="animate-in slide-in-from-bottom-10 fade-in duration-700 delay-300 border border-white/5 bg-[#0d0f14]/50 rounded-3xl p-8 backdrop-blur-sm">
+                    <div className="flex items-center gap-2 text-[10px] font-mono font-black text-[#00ff88] uppercase mb-6">
+                       <BarChart3 size={14} /> Intelligence_Nodes
+                    </div>
+                    <div className="flex flex-col gap-3">
+                       {result.entities.map((ent, i) => (
+                         <div key={i} className="flex items-center justify-between group">
+                            <span className="text-sm font-semibold text-gray-300 group-hover:text-white transition-colors">{ent}</span>
+                            <div className="h-px flex-1 mx-4 bg-white/[0.03]"></div>
+                            <span className="text-[10px] font-mono text-gray-600">ENTITY_{i+1}</span>
+                         </div>
+                       ))}
+                    </div>
+                 </div>
+               )}
+
+            </div>
           </div>
-        </div>
-
-      </main>
-
-      <footer className="text-center py-10 text-gray-600 font-mono text-xs tracking-widest border-t border-white/5">
-        &copy; 2026 TRUSTGUARD AI SYSTEMS • NEURAL DEFENSE PROTOCOL V1.0.4
-      </footer>
+        </main>
       </div>
     </div>
   );
 }
 
-function AnimatedCounter({ value, className }) {
-  const [count, setCount] = React.useState(0);
-
-  React.useEffect(() => {
-    let start = 0;
-    const end = parseInt(value) || 0;
-    if (start === end) {
-      setCount(end);
-      return;
-    }
-    
-    let totalDuration = 1500;
-    let incrementTime = Math.max(10, totalDuration / end);
-    
-    let timer = setInterval(() => {
-      start += 1;
-      setCount(start);
-      if (start >= end) {
-        clearInterval(timer);
-        setCount(end);
-      }
-    }, incrementTime);
-    
-    return () => clearInterval(timer);
-  }, [value]);
-
-  return <span className={className}>{count}</span>;
-}
-
-function AnimatedTextarea({ value, onChange }) {
-  const [placeholder, setPlaceholder] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-  const text = "Paste news article, social media post, or suspicious message here to verify truth patterns...";
-  
-  useEffect(() => {
-    if (isFocused || value) {
-      setPlaceholder('');
-      return;
-    }
-    
-    let currentIndex = 0;
-    const interval = setInterval(() => {
-      if (currentIndex <= text.length) {
-        setPlaceholder(text.slice(0, currentIndex) + (currentIndex % 2 === 0 ? '|' : ''));
-        currentIndex++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 40);
-    
-    return () => clearInterval(interval);
-  }, [isFocused, value]);
-
+function NavItem({ icon, label, active, onClick }) {
   return (
-    <textarea
-      className="w-full h-48 bg-transparent text-gray-200 p-5 outline-none resize-none font-sans text-lg placeholder:text-gray-500"
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
-    ></textarea>
+    <button 
+      onClick={onClick}
+      className={`flex items-center gap-2 group transition-all duration-300 relative
+        ${active ? 'text-[#00ff88]' : 'text-gray-500 hover:text-gray-300'}`}
+    >
+      {icon}
+      <span className="text-[10px] font-mono font-black tracking-widest uppercase">{label}</span>
+      {active && <div className="absolute -bottom-7 left-0 right-0 h-0.5 bg-[#00ff88] shadow-[0_0_8px_#00ff88]"></div>}
+    </button>
   );
 }
 
-function ShieldCheck({ size }) {
+function LoadingStep({ label, active, delay }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      <path d="M9 12l2 2 4-4"/>
-    </svg>
-  );
-}
-
-function FeatureCard({ icon, title, desc }) {
-  return (
-    <div className="bg-[#14151a] border border-white/5 rounded-2xl p-8 hover:border-accent/30 transition-colors duration-300 text-left">
-      <div className="bg-dark border border-white/5 w-14 h-14 rounded-xl flex items-center justify-center mb-6 shadow-sm">
-        {icon}
-      </div>
-      <h3 className="text-white font-display font-bold text-xl mb-3 tracking-wide">{title}</h3>
-      <p className="text-gray-400 leading-relaxed text-sm">
-        {desc}
-      </p>
+    <div className={`flex items-center gap-4 transition-all duration-500`} style={{ transitionDelay: delay }}>
+       <div className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-[#00ff88] animate-ping' : 'bg-gray-800'}`}></div>
+       <span className={`text-[10px] font-mono font-bold tracking-widest uppercase ${active ? 'text-white' : 'text-gray-700'}`}>
+         {label}
+       </span>
+       {active && <div className="ml-auto w-12 h-px bg-[#00ff88]/20"></div>}
     </div>
   );
 }
 
-function ThreatItem({ city, threat, level, color, bg }) {
+function AnalysisPill({ label, value, color }) {
   return (
-    <div className="bg-[#0b0c10] border border-white/5 rounded-xl p-4 hover:border-white/10 transition-colors">
-      <div className="flex justify-between items-start mb-4">
-        <span className="text-[10px] text-gray-500 font-mono tracking-wider uppercase">{city}</span>
-        <Activity size={12} className="text-accent" />
-      </div>
-      <div className="text-white font-semibold text-md mb-2">{threat}</div>
-      <div className={`flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest ${color}`}>
-        <div className={`w-1.5 h-1.5 rounded-full ${bg}`}></div>
-        {level} RISK
-      </div>
+    <div className="bg-black/60 rounded-xl p-4 border border-white/5">
+       <div className="text-[8px] font-mono font-black text-gray-600 uppercase mb-2">{label}</div>
+       <div className="text-[10px] font-mono font-black uppercase tracking-widest" style={{ color }}>{value}</div>
     </div>
   );
 }

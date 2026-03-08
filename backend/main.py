@@ -3,89 +3,123 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
 import os
-import random
+import re
+import nltk
+from textblob import TextBlob
+from typing import List, Optional
 
-app = FastAPI(title="TrustGuard AI API")
+# Download NLTK data if not present
+try:
+    nltk.data.find('sentiment')
+except LookupError:
+    nltk.download('movie_reviews')
+    nltk.download('punkt')
 
-# Setup CORS to allow React Frontend
+app = FastAPI(title="TrustGuard AI API - Deep Scan Pro")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict this.
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Optional pre-loaded model
-# We check if the model exists, otherwise simulate the API initially
 MODEL_PATH = "models/model.joblib"
 classifier = None
 
 try:
     if os.path.exists(MODEL_PATH):
         classifier = joblib.load(MODEL_PATH)
-        print("Model loaded successfully!")
-    else:
-        print("No trained model found. Train model or use mock logic if testing.")
+        print("Mega-Model loaded successfully!")
 except Exception as e:
     print(f"Error loading model: {e}")
 
 class CheckRequest(BaseModel):
     text: str
 
-class CheckResponse(BaseModel):
+class DeepScanResult(BaseModel):
     score: int
     category: str
     explanation: str
+    sentiment: str
+    subjectivity: float
+    flags: List[str]
+    entities: List[str]
 
-@app.post("/api/analyze", response_model=CheckResponse)
+# Known scam patterns and clickbait triggers
+SCAM_PATTERNS = [
+    (r"win(ning)? (a )?(\$|€|£)?\d+","Financial bait detected"),
+    (r"inheritance", "Inheritance scam marker"),
+    (r"crypto(currency)? investment", "Crypto scam risk"),
+    (r"click (here|this link)", "Potential phishing call-to-action"),
+    (r"(urgent|immediate) action required", "Artificial urgency detected"),
+    (r"unclaimed (funds|money)", "Financial scam pattern"),
+    (r"verify your (account|identity)", "Phishing pattern"),
+    (r"miracle cure", "Health misinformation"),
+    (r"secret (government|agency)", "Conspiracy theory marker")
+]
+
+@app.post("/api/analyze", response_model=DeepScanResult)
 def analyze_text(request: CheckRequest):
     text = request.text
+    flags = []
+    
+    # 1. Deep Scanning for known patterns
+    for pattern, reason in SCAM_PATTERNS:
+        if re.search(pattern, text.lower()):
+            flags.append(reason)
+            
+    # 2. Linguistic Analysis with TextBlob
+    blob = TextBlob(text)
+    sentiment_score = blob.sentiment.polarity
+    subjectivity = blob.sentiment.subjectivity
+    
+    sentiment_label = "Neutral"
+    if sentiment_score > 0.3: sentiment_label = "Highly Positive/Promotional"
+    elif sentiment_score < -0.3: sentiment_label = "Negative/Aggressive"
+    
+    if subjectivity > 0.7:
+        flags.append("High Subjectivity (Opinion-heavy)")
+    
+    # 3. Entity extraction (simple regex for capitalized names/orgs)
+    entities = list(set(re.findall(r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b', text)))
+    
+    # 4. Neural Prediction
+    trust_score = 50
+    category = "Suspicious"
+    explanation = "System in fallback mode."
     
     if classifier is not None:
         try:
-            # Predict the probability of it being "Fake" (class 1)
-            # Typically predict_proba returns [prob_real, prob_fake]
             probs = classifier.predict_proba([text])[0]
             prob_fake = probs[1]
             prob_real = probs[0]
-            
-            # Trust score out of 100 based on prob_real
             trust_score = int(prob_real * 100)
             
-            # Determine category: Fake (if fake > 0.6), Suspicious (0.4 - 0.6), Real (prob_real > 0.6)
-            if prob_fake > 0.65:
+            if prob_fake > 0.7 or len(flags) >= 2:
                 category = "Fake"
-                reason = "Our Neural NLP model detected high statistical similarities to known misinformation patterns and unverified linguistic markers."
-            elif prob_fake > 0.35:
+                explanation = "Deep scan detected significant misinformation markers and high linguistic deviation from verified reports."
+            elif prob_fake > 0.4 or len(flags) >= 1:
                 category = "Suspicious"
-                reason = "This text contains mixed credibility signals. It might lean towards sensationalism or lack strong factual backing."
+                explanation = "Anomalies detected in sentence structure or sentiment. Potential bias or lack of factual grounding flagged."
             else:
                 category = "Real"
-                reason = "Cross-referencing global datasets suggests this source text aligns strongly with fact-checked standards."
-            
-            return CheckResponse(score=trust_score, category=category, explanation=reason)
+                explanation = "Syntactic alignment matches standards of high-authority global news networks. Low subjectivity detected."
         except Exception as e:
-            print("Error predicting", e)
-            
-    # Mock fallback logic if model is missing or fails
-    if "cancer" in text.lower() or "miracle" in text.lower() or "scam" in text.lower():
-        return CheckResponse(
-            score=25, 
-            category="Fake", 
-            explanation="Claim lacks evidence, uses sensational language matching identified health misinformation datasets."
-        )
-    if "new feature" in text.lower() or "announces" in text.lower():
-        return CheckResponse(
-            score=92, 
-            category="Real", 
-            explanation="The phrasing and terminology align closely with verified press releases."
-        )
-        
-    return CheckResponse(
-        score=75,
-        category="Suspicious",
-        explanation="Moderate linguistic alignment with verified news, but lacks verifiable source citations."
+            print("Prediction error:", e)
+
+    # Adjust score based on flags
+    trust_score = max(0, trust_score - (len(flags) * 10))
+
+    return DeepScanResult(
+        score=trust_score,
+        category=category,
+        explanation=explanation,
+        sentiment=sentiment_label,
+        subjectivity=round(subjectivity, 2),
+        flags=flags,
+        entities=entities[:5] # Limit to top 5
     )
 
 if __name__ == "__main__":

@@ -1,68 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Source+Code+Pro:wght@400;600&family=Poppins:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --accent: #00ff88;
+  --accent-dark: #00cc6d;
+  --bg-dark: #06070a;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-dark);
+}
+
 @layer base {
-  body {
-    @apply bg-dark text-gray-200 font-sans antialiased overflow-x-hidden;
-    background-color: #0b0c10;
+  .font-display {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
   }
 }
 
-/* Custom Utilities for Neon Glows */
-.glow-border-subtle {
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.1), inset 0 0 10px rgba(0, 255, 136, 0.05);
-  border: 1px solid rgba(0, 255, 136, 0.2);
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+  }
+  
+  .font-glow {
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.3);
+  }
+
+  /* Custom Animations */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes progress {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(0%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .animate-progress {
+    animation: progress 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
 }
 
-.glow-border-active {
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4), inset 0 0 15px rgba(0, 255, 136, 0.2);
-  border: 1px solid rgba(0, 255, 136, 0.8);
-}
-
-.text-gradient {
-  background: linear-gradient(90deg, #fff, #00FF88);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.glass-panel {
-  background: rgba(22, 22, 29, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Scrollbar styling for a tech look */
+/* Custom Scrollbar for Cyber UI */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #0b0c10;
+  background: #0d0f14;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #1f2937;
-  border-radius: 4px;
+  background: #1a1b23;
+  border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #00FF88;
-}
-
-/* Animated Grid Background */
-.bg-animated-grid {
-  background-size: 50px 50px;
-  background-image: 
-    linear-gradient(to right, rgba(0, 255, 136, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
-  animation: panGrid 15s linear infinite;
-}
-
-@keyframes panGrid {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 50px 50px;
-  }
+  background: #00ff88;
 }
