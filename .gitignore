@@ -1,0 +1,31 @@
+# Common
+.DS_Store
+*.log
+.env
+.env.*
+
+# Backend (Python)
+backend/venv/
+backend/.venv/
+backend/__pycache__/
+backend/*.pyc
+backend/models/*.joblib
+backend/models/*.pkl
+
+# Frontend (Node)
+frontend/node_modules/
+frontend/dist/
+frontend/.vercel/
+
+# Artifacts
+deployment_guide.md
+implementation_plan.md
+run_trustguard.md
+*.png
+*.webp
+*.jpg
+
+# Large Dataset (Keep if you want Render to see it, but usually better to have Render download it or store elsewhere.
+# However, Render has a disk limit. Let's keep data/ CSVs if they are small enough, but usually we ignore them.
+# The user's repo seems to have 'data' folder. Let's check size.
+data/
