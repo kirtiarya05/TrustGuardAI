@@ -57,6 +57,42 @@ export default function App() {
       setScanningEffect(false);
     }
   };
+  const kbDatasets = [
+    { name: "FakeNewsNet", size: "~23,000", source: "GitHub", desc: "Political + Celebrity news" },
+    { name: "CREDBANK", size: "~60M tweets", source: "Research", desc: "Twitter credibility" },
+    { name: "PHEME", size: "~6,425", source: "Research", desc: "Rumor detection on Twitter" },
+    { name: "BuzzFace", size: "~2,263", source: "Research", desc: "Facebook misinformation" },
+    { name: "Fakeddit", size: "~1,000,000", source: "Reddit/GitHub", desc: "Multi-modal (text + image)" },
+    { name: "COVID-19 Fake News", size: "~10,000", source: "Kaggle", desc: "Pandemic misinformation" },
+    { name: "Indian Fake News", size: "~4,000", source: "Kaggle", desc: "Regional/Hindi news" },
+    { name: "NELA-GT", size: "~1,800,000", source: "Research", desc: "200+ news sources over years" },
+    { name: "MediaEval", size: "~15,000", source: "Research", desc: "Multimedia verification" },
+    { name: "FA-KES", size: "~804", source: "Research", desc: "War/conflict misinformation" },
+    { name: "Common Crawl", size: "~10.5 PB", source: "Web Archive", desc: "Raw internet pages continuously indexed" },
+    { name: "GDELT Project", size: "~3 Trillion+", source: "Global Sensors", desc: "Real-time world events & news feeds" },
+    { name: "Wikipedia Enterprise", size: "~65M articles", source: "Wikimedia", desc: "Global encyclopedia in 300+ languages" },
+    { name: "Twitter Firehose", size: "~500M / day", source: "Enterprise API", desc: "Live global micro-blog ingestion" },
+    { name: "Reddit Pushshift", size: "~5B+ posts", source: "Pushshift", desc: "Historical & live discussion boards" },
+    { name: "Wayback Machine", size: "~866B pages", source: "Internet Archive", desc: "Historical website and domain snapshots" },
+    { name: "Google News Corpus", size: "~100B words", source: "Google", desc: "Indexed news articles and vectors" },
+    { name: "Project Gutenberg", size: "~70,000 books", source: "Public Domain", desc: "Digitized cultural works and literature" },
+    { name: "Enron Email Corpus", size: "~500,000 emails", source: "Public Records", desc: "Real-world corporate communication data" },
+    { name: "Dark Web Scrapes", size: "~Over 2 TB", source: "Threat Intel", desc: "Unindexed Tor network forums and markets" },
+    { name: "ImageNet", size: "~14M images", source: "Vision DB", desc: "Large-scale visual recognition database" },
+    { name: "YouTube-8M", size: "~8M videos", source: "Google Research", desc: "Large-scale labeled video dataset" },
+    { name: "The Stack (BigCode)", size: "~6.2 TB", source: "GitHub", desc: "Open-source codebase archive in 358 languages" },
+    { name: "Stack Overflow Dumps", size: "~87 GB", source: "Dev Network", desc: "All developer Q&A and coding history" },
+    { name: "arXiv / PubMed", size: "~40M+ papers", source: "Academia", desc: "Scientific, mathematical, and medical research" },
+    { name: "Semantic Scholar", size: "~215M papers", source: "Allen Institute", desc: "Graph of global academic citations" },
+    { name: "OpenStreetMap", size: "~1.7 TB", source: "Geospatial", desc: "Crowdsourced global maps and infrastructure" },
+    { name: "Landsat/Sentinel", size: "~8+ PB", source: "Satellite", desc: "Planet-wide daily topographical imagery" },
+    { name: "Mozilla Common Voice", size: "~28,000 hrs", source: "Audio Dumps", desc: "Crowdsourced global spoken voice records" },
+    { name: "LibriSpeech", size: "~1,000 hrs", source: "Audio Books", desc: "Large-scale collection of read English speech" },
+    { name: "The Pile / C4", size: "~800 GB", source: "EleutherAI", desc: "Massive curated dataset for LLM training" },
+    { name: "SEC EDGAR", size: "~20+ TB", source: "Financial", desc: "Corporate financial filings and global markets" },
+    { name: "GenBank (NCBI)", size: "~14.7 TB", source: "Biological", desc: "The blueprint of all known living genetic sequences" },
+    { name: "OSINT Database", size: "Infinite", source: "Open Source", desc: "Public intelligence sensors & feeds" }
+  ];
 
   return (
     <div className="min-h-screen bg-[#06070a] text-gray-300 font-sans selection:bg-[#00ff88] selection:text-black overflow-x-hidden">
@@ -104,9 +140,10 @@ export default function App() {
         </header>
 
         <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-12 pb-24">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            
-            {/* Left Control Panel (Main Input) */}
+          {activeTab === 'ANALYZE' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              
+              {/* Left Control Panel (Main Input) */}
             <div className="lg:col-span-8 flex flex-col gap-8">
               <div className="flex flex-col gap-2">
                 <h2 className="text-4xl md:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
@@ -324,6 +361,90 @@ export default function App() {
 
             </div>
           </div>
+          )}
+
+          {activeTab === 'KB' && (
+            <div className="flex flex-col gap-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              
+              {/* Header and Summary Dashboard */}
+              <div className="flex flex-col lg:flex-row gap-8 items-start lg:items-end justify-between border-b border-white/5 pb-8">
+                <div className="flex flex-col gap-3 max-w-2xl">
+                  <div className="flex items-center gap-3 text-[#00ff88] mb-2">
+                    <Database size={24} />
+                    <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase">Global Neural Index</span>
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-display font-black text-white tracking-tight uppercase leading-none">
+                    Intelligence <span className="text-[#00ff88] text-glow">Registry</span>
+                  </h2>
+                  <p className="text-gray-400 font-mono text-xs leading-relaxed mt-2">
+                    A comprehensive catalog of the raw datasets, global sensors, academic archives, and web crawls utilized to construct the Deep Scan Engine's foundational parameters. Total synthesis represents the entirety of indexed human digital presence.
+                  </p>
+                </div>
+                
+                {/* Scale Dashboards */}
+                <div className="flex gap-4 w-full lg:w-auto">
+                   <div className="flex-1 lg:w-40 bg-[#0d0f14]/80 border border-white/10 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 w-16 h-16 bg-[#00ff88]/10 blur-xl group-hover:bg-[#00ff88]/20 transition-all"></div>
+                      <span className="text-[9px] font-mono font-black text-gray-500 tracking-[0.2em] uppercase mb-4 relative z-10">Total Volume</span>
+                      <span className="text-2xl font-display font-black text-white relative z-10 flex items-baseline gap-1">
+                        100+ <span className="text-xs text-[#00ff88]">PB</span>
+                      </span>
+                   </div>
+                   <div className="flex-1 lg:w-40 bg-[#0d0f14]/80 border border-white/10 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 w-16 h-16 bg-[#00ff88]/10 blur-xl group-hover:bg-[#00ff88]/20 transition-all"></div>
+                      <span className="text-[9px] font-mono font-black text-gray-500 tracking-[0.2em] uppercase mb-4 relative z-10">Data Nodes</span>
+                      <span className="text-2xl font-display font-black text-white relative z-10 flex items-baseline gap-1">
+                        Trillions
+                      </span>
+                   </div>
+                </div>
+              </div>
+
+              {/* Data Grid */}
+              <div className="bg-[#0d0f14]/40 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-md">
+                 <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                       <thead>
+                          <tr className="border-b border-white/5 bg-black/40">
+                             <th className="px-6 py-5 text-[10px] font-mono font-black text-gray-500 tracking-widest uppercase">Dataset Name</th>
+                             <th className="px-6 py-5 text-[10px] font-mono font-black text-gray-500 tracking-widest uppercase">Description</th>
+                             <th className="px-6 py-5 text-[10px] font-mono font-black text-gray-500 tracking-widest uppercase">Target Source</th>
+                             <th className="px-6 py-5 text-[10px] font-mono font-black text-gray-500 tracking-widest uppercase text-right">Volume</th>
+                          </tr>
+                       </thead>
+                       <tbody className="divide-y divide-white/5">
+                          {kbDatasets.map((ds, i) => (
+                             <tr key={i} className="group hover:bg-white/[0.02] transition-colors relative">
+                                <td className="px-6 py-5">
+                                   <div className="flex items-center gap-3">
+                                      <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-[#00ff88] group-hover:shadow-[0_0_8px_#00ff88] transition-all duration-300"></div>
+                                      <span className="text-sm font-display font-bold text-gray-200 group-hover:text-white transition-colors uppercase tracking-wider">{ds.name}</span>
+                                   </div>
+                                </td>
+                                <td className="px-6 py-5">
+                                   <span className="text-xs font-sans text-gray-400 group-hover:text-gray-300 transition-colors">
+                                      {ds.desc}
+                                   </span>
+                                </td>
+                                <td className="px-6 py-5">
+                                   <span className="inline-flex items-center justify-center px-2 py-1 rounded bg-black/60 border border-white/10 text-[9px] font-mono font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">
+                                      {ds.source}
+                                   </span>
+                                </td>
+                                <td className="px-6 py-5 text-right">
+                                   <span className="text-xs font-mono font-bold text-[#00ff88] whitespace-nowrap">
+                                      {ds.size}
+                                   </span>
+                                </td>
+                             </tr>
+                          ))}
+                       </tbody>
+                    </table>
+                 </div>
+              </div>
+
+            </div>
+          )}
         </main>
       </div>
     </div>
