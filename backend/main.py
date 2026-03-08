@@ -97,10 +97,10 @@ def analyze_text(request: CheckRequest):
             prob_real = probs[0]
             trust_score = int(prob_real * 100)
             
-            if prob_fake > 0.7 or len(flags) >= 2:
+            if prob_fake > 0.65 or len(flags) >= 3:
                 category = "Fake"
                 explanation = "Deep scan detected significant misinformation markers and high linguistic deviation from verified reports."
-            elif prob_fake > 0.4 or len(flags) >= 1:
+            elif prob_fake > 0.45 or len(flags) >= 2:
                 category = "Suspicious"
                 explanation = "Anomalies detected in sentence structure or sentiment. Potential bias or lack of factual grounding flagged."
             else:
