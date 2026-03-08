@@ -95,17 +95,17 @@ def compute_score(text):
         flags.append("High Subjectivity (Opinion-heavy)")
     
     # 5. Compute trust score
-    base_score = 60
-    base_score -= fake_count * 12
+    base_score = 85
+    base_score -= fake_count * 15
     base_score += real_count * 10
-    base_score -= len(flags) * 8
+    base_score -= len(flags) * 15
     base_score = max(0, min(100, base_score))
     
     # 6. Determine category
-    if base_score <= 35 or len(flags) >= 3:
+    if base_score <= 40 or len(flags) >= 3:
         category = "Fake"
         explanation = "Deep scan detected significant misinformation markers. Multiple red flags found including deceptive language patterns and unverified claims."
-    elif base_score <= 65 or len(flags) >= 1:
+    elif base_score <= 75 or len(flags) >= 1:
         category = "Suspicious"
         explanation = "Anomalies detected in sentence structure or sentiment. Potential bias or lack of factual grounding flagged by the forensic engine."
     else:
