@@ -16,7 +16,6 @@ except LookupError:
     nltk.download('punkt')
 
 app = FastAPI(title="TrustGuard AI API - Deep Scan Pro")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,6 +23,27 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+from nltk.corpus import stopwords
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('stopwords')
+STOPWORDS = set(stopwords.words('english'))
+
+def clean_text(text):
+    if not isinstance(text, str):
+        return ""
+    text = str(text).lower()
+    text = re.sub(r'\[.*?\]', '', text)
+    text = re.sub(r'https?://\S+|www\.\S+', '', text)
+    text = re.sub(r'<.*?>+', '', text)
+    text = re.sub(r'[%s]' % re.escape(r'!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'), '', text)
+    text = re.sub(r'\n', '', text)
+    text = re.sub(r'\w*\d\w*', '', text)
+    text = " ".join([w for w in text.split() if w not in STOPWORDS])
+    return text
+
 
 MODEL_PATH = "models/model.joblib"
 classifier = None
@@ -92,7 +112,8 @@ def analyze_text(request: CheckRequest):
     
     if classifier is not None:
         try:
-            probs = classifier.predict_proba([text])[0]
+            cleaned_text = clean_text(text)
+            probs = classifier.predict_proba([cleaned_text])[0]
             prob_fake = probs[1]
             prob_real = probs[0]
             trust_score = int(prob_real * 100)
