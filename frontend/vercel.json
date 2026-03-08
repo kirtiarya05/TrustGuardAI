@@ -1,8 +1,5 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/analyze",
-      "destination": "/api/analyze"
-    }
-  ]
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite"
 }
