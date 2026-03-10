@@ -33,7 +33,7 @@ export default function App() {
     await new Promise(r => setTimeout(r, 2200));
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
       const response = await fetch(`${apiUrl}/api/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -57,20 +57,6 @@ export default function App() {
       setScanningEffect(false);
     }
   };
-  const kbDatasets = [
-    { name: "ABC News Million", size: "~1,200,000", source: "Auth Feed", desc: "Foundational high-authority news headlines used for massive anomaly detection and veracity baseline." },
-    { name: "ISOT Global News", size: "~44,898", source: "Verified Feed", desc: "Aggregated high-authority news versus known disinformation outlets." },
-    { name: "WELFake Mega-Set", size: "~72,134", source: "Research Union", desc: "Largest-scale text-based veracity dataset from multiple research clusters." },
-    { name: "BuzzFace Forensic", size: "~2,263", source: "Social Media", desc: "Veracity mapping of viral Facebook posts and user commentary dynamics." },
-    { name: "FakeNewsNet (FNN)", size: "~23,122", source: "Fact-Checkers", desc: "Correlated news data with social media sharing patterns and veracity." },
-    { name: "LIAR-PolitiFact", size: "~12,836", source: "API Live", desc: "Short-form statement analysis with 6-level veracity categorization (Pants-on-fire to True)." },
-    { name: "UCI Fake or Real", size: "~6,335", source: "Academic", desc: "Golden-standard curated news dataset for linguistic pattern benchmarking." },
-    { name: "Kaggle Comp Bench", size: "~20,800", source: "Global Comp", desc: "Competitive dataset for advanced misinformation detection and pattern recognition." },
-    { name: "COVID-19 Sentry", size: "~10,700", source: "Health Org", desc: "Real-time pandemic misinformation and health-scam forensic mapping." },
-    { name: "FA-KES Conflict", size: "~804", source: "OSINT Hub", desc: "Syrian war and global conflict news veracity tracking." },
-    { name: "NELA-GT Snapshot", size: "~1.8M (Future)", source: "Harvard", desc: "Long-term news outlet reliability tracking across 200+ global sources." },
-    { name: "Common Crawl (Raw)", size: "~10.5 PB", source: "Web Cloud", desc: "Foundational internet indexing for base language distribution." }
-  ];
 
   return (
     <div className="min-h-screen bg-[#06070a] text-gray-300 font-sans selection:bg-[#00ff88] selection:text-black overflow-x-hidden">
@@ -97,7 +83,7 @@ export default function App() {
               </div>
               <div className="flex flex-col">
                 <span className="font-display font-black text-xl tracking-[0.25em] text-white">TRUSTGUARD AI</span>
-                <span className="text-[9px] font-mono text-[#00ff88]/70 tracking-[0.4em] uppercase">Deep Scan Protocol v6.0.0</span>
+                <span className="text-[9px] font-mono text-[#00ff88]/70 tracking-[0.4em] uppercase">Deep Scan Protocol v4.2.0</span>
               </div>
             </div>
 
@@ -118,10 +104,9 @@ export default function App() {
         </header>
 
         <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-12 pb-24">
-          {activeTab === 'ANALYZE' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              
-              {/* Left Control Panel (Main Input) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            
+            {/* Left Control Panel (Main Input) */}
             <div className="lg:col-span-8 flex flex-col gap-8">
               <div className="flex flex-col gap-2">
                 <h2 className="text-4xl md:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
@@ -339,90 +324,6 @@ export default function App() {
 
             </div>
           </div>
-          )}
-
-          {activeTab === 'KB' && (
-            <div className="flex flex-col gap-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              
-              {/* Header and Summary Dashboard */}
-              <div className="flex flex-col lg:flex-row gap-8 items-start lg:items-end justify-between border-b border-white/5 pb-8">
-                <div className="flex flex-col gap-3 max-w-2xl">
-                  <div className="flex items-center gap-3 text-[#00ff88] mb-2">
-                    <Database size={24} />
-                    <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase">Global Neural Index</span>
-                  </div>
-                  <h2 className="text-4xl md:text-5xl font-display font-black text-white tracking-tight uppercase leading-none">
-                    Intelligence <span className="text-[#00ff88] text-glow">Registry</span>
-                  </h2>
-                  <p className="text-gray-400 font-mono text-xs leading-relaxed mt-2">
-                    A comprehensive catalog of the raw datasets, global sensors, academic archives, and web crawls utilized to construct the Deep Scan Engine's foundational parameters. Total synthesis represents the entirety of indexed human digital presence.
-                  </p>
-                </div>
-                
-                {/* Scale Dashboards */}
-                <div className="flex gap-4 w-full lg:w-auto">
-                   <div className="flex-1 lg:w-40 bg-[#0d0f14]/80 border border-white/10 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden group">
-                      <div className="absolute top-0 right-0 w-16 h-16 bg-[#00ff88]/10 blur-xl group-hover:bg-[#00ff88]/20 transition-all"></div>
-                      <span className="text-[9px] font-mono font-black text-gray-500 tracking-[0.2em] uppercase mb-4 relative z-10">Neural Data Bloom</span>
-                      <span className="text-2xl font-display font-black text-white relative z-10 flex items-baseline gap-1">
-                        1.3M+ <span className="text-xs text-[#00ff88]">VECTORS</span>
-                      </span>
-                   </div>
-                   <div className="flex-1 lg:w-40 bg-[#0d0f14]/80 border border-white/10 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden group">
-                      <div className="absolute top-0 right-0 w-16 h-16 bg-[#00ff88]/10 blur-xl group-hover:bg-[#00ff88]/20 transition-all"></div>
-                      <span className="text-[9px] font-mono font-black text-gray-500 tracking-[0.2em] uppercase mb-4 relative z-10">Scam Sensors</span>
-                      <span className="text-2xl font-display font-black text-white relative z-10 flex items-baseline gap-1">
-                        Active
-                      </span>
-                   </div>
-                </div>
-              </div>
-
-              {/* Data Grid */}
-              <div className="bg-[#0d0f14]/40 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-md">
-                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                       <thead>
-                          <tr className="border-b border-white/5 bg-black/40">
-                             <th className="px-6 py-5 text-[10px] font-mono font-black text-gray-500 tracking-widest uppercase">Dataset Name</th>
-                             <th className="px-6 py-5 text-[10px] font-mono font-black text-gray-500 tracking-widest uppercase">Description</th>
-                             <th className="px-6 py-5 text-[10px] font-mono font-black text-gray-500 tracking-widest uppercase">Target Source</th>
-                             <th className="px-6 py-5 text-[10px] font-mono font-black text-gray-500 tracking-widest uppercase text-right">Volume</th>
-                          </tr>
-                       </thead>
-                       <tbody className="divide-y divide-white/5">
-                          {kbDatasets.map((ds, i) => (
-                             <tr key={i} className="group hover:bg-white/[0.02] transition-colors relative">
-                                <td className="px-6 py-5">
-                                   <div className="flex items-center gap-3">
-                                      <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-[#00ff88] group-hover:shadow-[0_0_8px_#00ff88] transition-all duration-300"></div>
-                                      <span className="text-sm font-display font-bold text-gray-200 group-hover:text-white transition-colors uppercase tracking-wider">{ds.name}</span>
-                                   </div>
-                                </td>
-                                <td className="px-6 py-5">
-                                   <span className="text-xs font-sans text-gray-400 group-hover:text-gray-300 transition-colors">
-                                      {ds.desc}
-                                   </span>
-                                </td>
-                                <td className="px-6 py-5">
-                                   <span className="inline-flex items-center justify-center px-2 py-1 rounded bg-black/60 border border-white/10 text-[9px] font-mono font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">
-                                      {ds.source}
-                                   </span>
-                                </td>
-                                <td className="px-6 py-5 text-right">
-                                   <span className="text-xs font-mono font-bold text-[#00ff88] whitespace-nowrap">
-                                      {ds.size}
-                                   </span>
-                                </td>
-                             </tr>
-                          ))}
-                       </tbody>
-                    </table>
-                 </div>
-              </div>
-
-            </div>
-          )}
         </main>
       </div>
     </div>
