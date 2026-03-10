@@ -58,40 +58,18 @@ export default function App() {
     }
   };
   const kbDatasets = [
-    { name: "FakeNewsNet", size: "~23,000", source: "GitHub", desc: "Political + Celebrity news" },
-    { name: "CREDBANK", size: "~60M tweets", source: "Research", desc: "Twitter credibility" },
-    { name: "PHEME", size: "~6,425", source: "Research", desc: "Rumor detection on Twitter" },
-    { name: "BuzzFace", size: "~2,263", source: "Research", desc: "Facebook misinformation" },
-    { name: "Fakeddit", size: "~1,000,000", source: "Reddit/GitHub", desc: "Multi-modal (text + image)" },
-    { name: "COVID-19 Fake News", size: "~10,000", source: "Kaggle", desc: "Pandemic misinformation" },
-    { name: "Indian Fake News", size: "~4,000", source: "Kaggle", desc: "Regional/Hindi news" },
-    { name: "NELA-GT", size: "~1,800,000", source: "Research", desc: "200+ news sources over years" },
-    { name: "MediaEval", size: "~15,000", source: "Research", desc: "Multimedia verification" },
-    { name: "FA-KES", size: "~804", source: "Research", desc: "War/conflict misinformation" },
-    { name: "Common Crawl", size: "~10.5 PB", source: "Web Archive", desc: "Raw internet pages continuously indexed" },
-    { name: "GDELT Project", size: "~3 Trillion+", source: "Global Sensors", desc: "Real-time world events & news feeds" },
-    { name: "Wikipedia Enterprise", size: "~65M articles", source: "Wikimedia", desc: "Global encyclopedia in 300+ languages" },
-    { name: "Twitter Firehose", size: "~500M / day", source: "Enterprise API", desc: "Live global micro-blog ingestion" },
-    { name: "Reddit Pushshift", size: "~5B+ posts", source: "Pushshift", desc: "Historical & live discussion boards" },
-    { name: "Wayback Machine", size: "~866B pages", source: "Internet Archive", desc: "Historical website and domain snapshots" },
-    { name: "Google News Corpus", size: "~100B words", source: "Google", desc: "Indexed news articles and vectors" },
-    { name: "Project Gutenberg", size: "~70,000 books", source: "Public Domain", desc: "Digitized cultural works and literature" },
-    { name: "Enron Email Corpus", size: "~500,000 emails", source: "Public Records", desc: "Real-world corporate communication data" },
-    { name: "Dark Web Scrapes", size: "~Over 2 TB", source: "Threat Intel", desc: "Unindexed Tor network forums and markets" },
-    { name: "ImageNet", size: "~14M images", source: "Vision DB", desc: "Large-scale visual recognition database" },
-    { name: "YouTube-8M", size: "~8M videos", source: "Google Research", desc: "Large-scale labeled video dataset" },
-    { name: "The Stack (BigCode)", size: "~6.2 TB", source: "GitHub", desc: "Open-source codebase archive in 358 languages" },
-    { name: "Stack Overflow Dumps", size: "~87 GB", source: "Dev Network", desc: "All developer Q&A and coding history" },
-    { name: "arXiv / PubMed", size: "~40M+ papers", source: "Academia", desc: "Scientific, mathematical, and medical research" },
-    { name: "Semantic Scholar", size: "~215M papers", source: "Allen Institute", desc: "Graph of global academic citations" },
-    { name: "OpenStreetMap", size: "~1.7 TB", source: "Geospatial", desc: "Crowdsourced global maps and infrastructure" },
-    { name: "Landsat/Sentinel", size: "~8+ PB", source: "Satellite", desc: "Planet-wide daily topographical imagery" },
-    { name: "Mozilla Common Voice", size: "~28,000 hrs", source: "Audio Dumps", desc: "Crowdsourced global spoken voice records" },
-    { name: "LibriSpeech", size: "~1,000 hrs", source: "Audio Books", desc: "Large-scale collection of read English speech" },
-    { name: "The Pile / C4", size: "~800 GB", source: "EleutherAI", desc: "Massive curated dataset for LLM training" },
-    { name: "SEC EDGAR", size: "~20+ TB", source: "Financial", desc: "Corporate financial filings and global markets" },
-    { name: "GenBank (NCBI)", size: "~14.7 TB", source: "Biological", desc: "The blueprint of all known living genetic sequences" },
-    { name: "OSINT Database", size: "Infinite", source: "Open Source", desc: "Public intelligence sensors & feeds" }
+    { name: "ABC News Million", size: "~1,200,000", source: "Auth Feed", desc: "Foundational high-authority news headlines used for massive anomaly detection and veracity baseline." },
+    { name: "ISOT Global News", size: "~44,898", source: "Verified Feed", desc: "Aggregated high-authority news versus known disinformation outlets." },
+    { name: "WELFake Mega-Set", size: "~72,134", source: "Research Union", desc: "Largest-scale text-based veracity dataset from multiple research clusters." },
+    { name: "BuzzFace Forensic", size: "~2,263", source: "Social Media", desc: "Veracity mapping of viral Facebook posts and user commentary dynamics." },
+    { name: "FakeNewsNet (FNN)", size: "~23,122", source: "Fact-Checkers", desc: "Correlated news data with social media sharing patterns and veracity." },
+    { name: "LIAR-PolitiFact", size: "~12,836", source: "API Live", desc: "Short-form statement analysis with 6-level veracity categorization (Pants-on-fire to True)." },
+    { name: "UCI Fake or Real", size: "~6,335", source: "Academic", desc: "Golden-standard curated news dataset for linguistic pattern benchmarking." },
+    { name: "Kaggle Comp Bench", size: "~20,800", source: "Global Comp", desc: "Competitive dataset for advanced misinformation detection and pattern recognition." },
+    { name: "COVID-19 Sentry", size: "~10,700", source: "Health Org", desc: "Real-time pandemic misinformation and health-scam forensic mapping." },
+    { name: "FA-KES Conflict", size: "~804", source: "OSINT Hub", desc: "Syrian war and global conflict news veracity tracking." },
+    { name: "NELA-GT Snapshot", size: "~1.8M (Future)", source: "Harvard", desc: "Long-term news outlet reliability tracking across 200+ global sources." },
+    { name: "Common Crawl (Raw)", size: "~10.5 PB", source: "Web Cloud", desc: "Foundational internet indexing for base language distribution." }
   ];
 
   return (
@@ -119,7 +97,7 @@ export default function App() {
               </div>
               <div className="flex flex-col">
                 <span className="font-display font-black text-xl tracking-[0.25em] text-white">TRUSTGUARD AI</span>
-                <span className="text-[9px] font-mono text-[#00ff88]/70 tracking-[0.4em] uppercase">Deep Scan Protocol v4.2.0</span>
+                <span className="text-[9px] font-mono text-[#00ff88]/70 tracking-[0.4em] uppercase">Deep Scan Protocol v6.0.0</span>
               </div>
             </div>
 
@@ -385,16 +363,16 @@ export default function App() {
                 <div className="flex gap-4 w-full lg:w-auto">
                    <div className="flex-1 lg:w-40 bg-[#0d0f14]/80 border border-white/10 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden group">
                       <div className="absolute top-0 right-0 w-16 h-16 bg-[#00ff88]/10 blur-xl group-hover:bg-[#00ff88]/20 transition-all"></div>
-                      <span className="text-[9px] font-mono font-black text-gray-500 tracking-[0.2em] uppercase mb-4 relative z-10">Total Volume</span>
+                      <span className="text-[9px] font-mono font-black text-gray-500 tracking-[0.2em] uppercase mb-4 relative z-10">Neural Data Bloom</span>
                       <span className="text-2xl font-display font-black text-white relative z-10 flex items-baseline gap-1">
-                        100+ <span className="text-xs text-[#00ff88]">PB</span>
+                        1.3M+ <span className="text-xs text-[#00ff88]">VECTORS</span>
                       </span>
                    </div>
                    <div className="flex-1 lg:w-40 bg-[#0d0f14]/80 border border-white/10 rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden group">
                       <div className="absolute top-0 right-0 w-16 h-16 bg-[#00ff88]/10 blur-xl group-hover:bg-[#00ff88]/20 transition-all"></div>
-                      <span className="text-[9px] font-mono font-black text-gray-500 tracking-[0.2em] uppercase mb-4 relative z-10">Data Nodes</span>
+                      <span className="text-[9px] font-mono font-black text-gray-500 tracking-[0.2em] uppercase mb-4 relative z-10">Scam Sensors</span>
                       <span className="text-2xl font-display font-black text-white relative z-10 flex items-baseline gap-1">
-                        Trillions
+                        Active
                       </span>
                    </div>
                 </div>

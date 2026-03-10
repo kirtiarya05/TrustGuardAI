@@ -113,22 +113,36 @@ def analyze_text(request: CheckRequest):
     if classifier is not None:
         try:
             cleaned_text = clean_text(text)
-            probs = classifier.predict_proba([cleaned_text])[0]
-            prob_fake = probs[1]
-            prob_real = probs[0]
+            
+            # Calculate pseudo-probability for V6.2 hard-voting ensemble
+            X_transformed = classifier.named_steps['features'].transform([cleaned_text])
+            predictions = []
+            for clf in classifier.named_steps['clf'].estimators_:
+                predictions.append(clf.predict(X_transformed)[0])
+                
+            prob_fake = sum(predictions) / len(predictions) if predictions else 0.5
+            prob_real = 1.0 - prob_fake
             trust_score = int(prob_real * 100)
             
-            if prob_fake > 0.65 or len(flags) >= 3:
+            if prob_fake >= 0.65 or len(flags) >= 3:
                 category = "Fake"
-                explanation = "Deep scan detected significant misinformation markers and high linguistic deviation from verified reports."
-            elif prob_fake > 0.45 or len(flags) >= 2:
+                explanation = "CRITICAL: "
+                if flags:
+                    explanation += f"Detected {', '.join(flags[:2])}. "
+                explanation += "Deep scan indicates significant misinformation markers and high linguistic deviation from verified reports."
+            elif prob_fake > 0.35 or len(flags) >= 2:
                 category = "Suspicious"
-                explanation = "Anomalies detected in sentence structure or sentiment. Potential bias or lack of factual grounding flagged."
+                explanation = "WARNING: "
+                if flags:
+                    explanation += f"Flagged for {flags[0]}. "
+                explanation += f"Anomalies detected in {'highly subjective' if subjectivity > 0.6 else 'sentence'} structure with a {sentiment_label.lower()} tone."
             else:
                 category = "Real"
-                explanation = "Syntactic alignment matches standards of high-authority global news networks. Low subjectivity detected."
+                explanation = f"TRUSTED: Syntactic alignment matches standards of high-authority global news networks. Detected {sentiment_label.lower()} sentiment with low subjectivity."
         except Exception as e:
             print("Prediction error:", e)
+            explanation = "System fallback: Neural prediction failed."
+
 
     # Adjust score based on flags
     trust_score = max(0, trust_score - (len(flags) * 10))
